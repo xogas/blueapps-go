@@ -1,5 +1,5 @@
 # -------------- builder & runner container --------------
-FROM golang:1.22 AS builder
+FROM golang:1.25.4 AS builder
 
 RUN sed -i "s@deb.debian.org@mirrors.tencent.com@g" /etc/apt/sources.list.d/debian.sources
 

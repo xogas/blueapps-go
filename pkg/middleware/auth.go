@@ -24,6 +24,7 @@ import (
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/samber/lo"
 
 	"github.com/TencentBlueKing/blueapps-go/pkg/account"
 	"github.com/TencentBlueKing/blueapps-go/pkg/common"
@@ -96,14 +97,29 @@ func UserAuth(authBackends []account.AuthBackend) gin.HandlerFunc {
 
 // 重定向到登录页面
 func redirectToLoginPage(c *gin.Context, backend account.AuthBackend) {
+	// 获取回调地址，如果有显示指定 Referer 则使用，否则使用当前页面
+	callbackUrl := lo.Ternary(c.Request.Referer() != "", c.Request.Referer(), getFullRequestURL(c))
 	ginH := gin.H{
 		"authType": backend.Name(),
-		"loginUrl": backend.GetLoginUrl(c.Request.Referer()),
+		"loginUrl": backend.GetLoginUrl(callbackUrl),
 		"lang":     ginx.GetLang(c),
 	}
 
 	c.HTML(http.StatusUnauthorized, "401.html", ginH)
 	c.Abort()
+}
+
+// getFullRequestURL 获取完整的请求 URL（包含 scheme）
+func getFullRequestURL(c *gin.Context) string {
+	scheme := "http"
+	// 优先从 X-Forwarded-Proto 获取（反向代理场景）
+	if proto := c.GetHeader("X-Forwarded-Proto"); proto != "" {
+		scheme = proto
+	} else if c.Request.TLS != nil {
+		// 直连场景，通过 TLS 判断
+		scheme = "https"
+	}
+	return scheme + "://" + c.Request.Host + c.Request.URL.String()
 }
 
 // 在 Context 中设置用户信息

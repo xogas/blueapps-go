@@ -149,7 +149,7 @@ AppSecret 是开发者中心分配给每个应用的密钥，与 AppID 搭配使
 
 #### 配置 Golang 开发环境
 
-我们推荐使用 JetBrain 的 Goland IDE 来开发 Golang 项目，通过 Goland 打开项目后，通过 `Goland -> Settings -> Go -> GOROOT` 设置使用最高的 Go 1.22 版本（如 Go 1.22.5）。
+我们推荐使用 JetBrain 的 Goland IDE 来开发 Golang 项目，通过 Goland 打开项目后，通过 `Goland -> Settings -> Go -> GOROOT` 设置使用最高的 Go 1.25 版本（如 Go 1.25.4）。
 
 在 IDE 中打开 Terminal，输入 `go version` 确定 Go 版本是否正确，而后执行 `make tidy` 下载项目所需要的 Golang 依赖包（此步需要耐心等待）。
 

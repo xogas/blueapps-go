@@ -34,7 +34,7 @@ import (
 
 // Debugf 打印 debug 日志
 func Debugf(ctx context.Context, format string, vars ...any) {
-	Logf(ctx, slog.LevelDebug, format, vars...)
+	Logf(ctx, slog.LevelDebug, fmt.Sprintf(format, vars...))
 }
 
 // Debug 打印 debug 日志
@@ -44,7 +44,7 @@ func Debug(ctx context.Context, msg string) {
 
 // Infof 打印 info 日志
 func Infof(ctx context.Context, format string, vars ...any) {
-	Logf(ctx, slog.LevelInfo, format, vars...)
+	Logf(ctx, slog.LevelInfo, fmt.Sprintf(format, vars...))
 }
 
 // Info 打印 info 日志
@@ -54,7 +54,7 @@ func Info(ctx context.Context, msg string) {
 
 // Warnf 打印 warn 日志
 func Warnf(ctx context.Context, format string, vars ...any) {
-	Logf(ctx, slog.LevelWarn, format, vars...)
+	Logf(ctx, slog.LevelWarn, fmt.Sprintf(format, vars...))
 }
 
 // Warn 打印 warn 日志
@@ -64,7 +64,7 @@ func Warn(ctx context.Context, msg string) {
 
 // Errorf 打印 error 日志
 func Errorf(ctx context.Context, format string, vars ...any) {
-	Logf(ctx, slog.LevelError, format, vars...)
+	Logf(ctx, slog.LevelError, fmt.Sprintf(format, vars...))
 }
 
 // Error 打印 error 日志
@@ -76,20 +76,20 @@ func Error(ctx context.Context, msg string) {
 // Q：为什么 Fatalf 是强制使用 stderr 而非 slog.Default() ？
 // A：调用 Fatalf 意味着程序即将退出，此时往标准输出而不是文件打日志是更合理的（避免 Pod 崩溃导致日志无法采集）
 func Fatalf(format string, vars ...any) {
-	// 由于马上会退出，这里直接 New logger 而不是预先初始化也是可以的
-	logger := log.New(os.Stderr, "", log.LstdFlags)
-	logger.Fatalf(format, vars...)
+	Fatal(fmt.Sprintf(format, vars...))
 }
 
 // Fatal 打印 fatal 日志到标准输出并退出程序
 func Fatal(msg string) {
-	Fatalf(msg)
+	// 由于马上会退出，这里直接 New logger 而不是预先初始化也是可以的
+	logger := log.New(os.Stderr, "", log.LstdFlags)
+	logger.Fatal(msg)
 }
 
 // Logf 打印日志
 // ref: https://github.com/golang/go/blob/fc9f02c7aec81bcfcc95434d2529e0bb0bc03d66/src/log/slog/example_wrap_test.go#L19
 // 注：该方法只能在 logging 包及其子包（如 logging/slogresty）中使用，不得在业务逻辑中直接使用
-func Logf(ctx context.Context, level slog.Level, format string, vars ...any) {
+func Logf(ctx context.Context, level slog.Level, msg string) {
 	logger := slog.Default()
 	if !logger.Enabled(ctx, level) {
 		return
@@ -97,7 +97,7 @@ func Logf(ctx context.Context, level slog.Level, format string, vars ...any) {
 
 	var pcs [1]uintptr
 	runtime.Callers(3, pcs[:])
-	r := slog.NewRecord(time.Now(), level, fmt.Sprintf(format, vars...), pcs[0])
+	r := slog.NewRecord(time.Now(), level, msg, pcs[0])
 	// 尝试获取 Request ID，若存在则需要记录到日志中
 	if requestID, ok := ctx.Value(common.RequestIDCtxKey).(string); ok {
 		r.AddAttrs(slog.String(common.RequestIDLogKey, requestID))

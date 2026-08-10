@@ -76,7 +76,7 @@ func (r *UploadObjectRequest) Validate(c *gin.Context) error {
 		return errors.Errorf(i18n.T(ctx, "invalid dir path %s"), r.DirPath)
 	}
 	if r.File == nil {
-		return errors.Errorf(i18n.T(ctx, "file is required"))
+		return errors.New(i18n.T(ctx, "file is required"))
 	}
 	if matched := ObjNameRegex.MatchString(r.File.Filename); !matched {
 		return errors.Errorf(i18n.T(ctx, "invalid file name %s"), r.File.Filename)

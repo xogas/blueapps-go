@@ -81,7 +81,7 @@ func (s *TaskScheduler) Run() {
 // LoadTasks 加载所有周期任务
 func (s *TaskScheduler) LoadTasks() error {
 	// 从数据库加载周期性任务
-	periodicTasks := []model.PeriodicTask{}
+	var periodicTasks []model.PeriodicTask
 	if err := database.Client(s.ctx).Find(&periodicTasks).Error; err != nil {
 		return errors.Wrap(err, "load periodic tasks")
 	}

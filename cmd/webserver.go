@@ -26,6 +26,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/TencentBlueKing/blueapps-go/pkg/config"
@@ -80,7 +81,7 @@ func NewWebServerCmd() *cobra.Command {
 				Handler: router.New(log.GetLogger("gin")),
 			}
 			go func() {
-				if err = srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+				if err = srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 					log.Fatalf("Start server failed: %s", err)
 				}
 			}()

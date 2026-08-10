@@ -21,6 +21,7 @@ package slogresty
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 
 	"github.com/go-resty/resty/v2"
@@ -40,17 +41,17 @@ func New(ctx context.Context) *Logger {
 
 // Errorf ...
 func (l *Logger) Errorf(format string, v ...any) {
-	logging.Logf(l.ctx, slog.LevelError, format, v...)
+	logging.Logf(l.ctx, slog.LevelError, fmt.Sprintf(format, v...))
 }
 
 // Warnf ...
 func (l *Logger) Warnf(format string, v ...any) {
-	logging.Logf(l.ctx, slog.LevelWarn, format, v...)
+	logging.Logf(l.ctx, slog.LevelWarn, fmt.Sprintf(format, v...))
 }
 
 // Debugf ...
 func (l *Logger) Debugf(format string, v ...any) {
-	logging.Logf(l.ctx, slog.LevelDebug, format, v...)
+	logging.Logf(l.ctx, slog.LevelDebug, fmt.Sprintf(format, v...))
 }
 
 var _ resty.Logger = (*Logger)(nil)

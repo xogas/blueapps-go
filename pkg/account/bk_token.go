@@ -42,11 +42,7 @@ func (b *BkTokenAuthBackend) Name() string {
 
 // GetLoginUrl 获取登录地址
 func (b *BkTokenAuthBackend) GetLoginUrl(callbackUrl string) string {
-	loginUrl := fmt.Sprintf("%s/plain/", config.G.Platform.BkPlatUrl.BkLogin)
-	if callbackUrl != "" {
-		loginUrl += fmt.Sprintf("?c_url=%s", url.QueryEscape(callbackUrl))
-	}
-	return loginUrl
+	return fmt.Sprintf("%s/plain/?c_url=%s", config.G.Platform.BkPlatUrl.BkLogin, url.QueryEscape(callbackUrl))
 }
 
 // GetUserToken 获取用户凭证
