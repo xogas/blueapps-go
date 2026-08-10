@@ -58,7 +58,7 @@ func New(slogger *slog.Logger) *gin.Engine {
 	router := gin.New()
 	_ = router.SetTrustedProxies(nil)
 	store := cookie.NewStore([]byte(config.G.Platform.AppSecret))
-	store.Options(sessions.Options{MaxAge: int(30 * time.Minute)})
+	store.Options(sessions.Options{MaxAge: int(30 * time.Minute.Seconds())})
 	router.Use(sessions.Sessions(fmt.Sprintf("%s-session", config.G.Platform.AppID), store))
 
 	// 服务指标
